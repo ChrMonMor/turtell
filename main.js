@@ -39,7 +39,7 @@ class Game {
     for (const hexagon of this.hexGrid) {
       this.draw(hexagon);
     }
-    requestAnimationFrame(() => this.render()); // Sikker render binder
+    requestAnimationFrame(() => this.render()); 
   }
 
   setup() {
@@ -78,13 +78,11 @@ class Game {
   gameBoardZoomControlles() {
     this.canvas.addEventListener("wheel", (e) => {
         e.preventDefault();
-        // Musens position relativt til canvas
         const mouseX = e.clientX - this.canvasRect.left; 
         const mouseY = e.clientY - this.canvasRect.top;
         const previousZoom = this.controllerStats.zoomLevel;
         const zoomDelta = e.deltaY * this.controllerStats.scrollSpeed;
 
-        // Opdater zoomniveau
         this.controllerStats.zoomLevel = Math.min(
           Math.max(this.controllerStats.minZoom, previousZoom + zoomDelta),
           this.controllerStats.maxZoom
@@ -92,7 +90,6 @@ class Game {
 
         const zoomFactor = this.controllerStats.zoomLevel / previousZoom;
 
-        // Justér offset for at holde musens position stabil
         this.controllerStats.offset.left = mouseX - zoomFactor * (mouseX - this.controllerStats.offset.left);
         this.controllerStats.offset.top = mouseY - zoomFactor * (mouseY - this.controllerStats.offset.top);
     }, { passive: false });
