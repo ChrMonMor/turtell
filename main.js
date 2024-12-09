@@ -44,6 +44,7 @@ class Game {
 
   setup() {
     this.addControlles();
+    this.addEvents();
     for (let i = 0; i < this.sizeX; i++) {
       for (let j = 0; j < this.sizeY; j++) {
         if (i % 2 === j % 2) {
@@ -52,7 +53,10 @@ class Game {
           this.hexGrid.push(new Hexagon(x, y));
         }
       }
-    }
+    }  
+    var dpr = window.devicePixelRatio;
+    this.canvas.width = window.innerWidth * dpr;
+    this.canvas.height = window.innerHeight * dpr;
   }
 
   gameBoardPanningControlles() {
@@ -99,6 +103,13 @@ class Game {
   addControlles() {
     this.gameBoardPanningControlles();
     this.gameBoardZoomControlles();
+  }
+  addEvents(){
+    addEventListener("resize", () => {
+      var dpr = window.devicePixelRatio;
+      this.canvas.width = window.innerWidth * dpr;
+      this.canvas.height = window.innerHeight * dpr;
+    });
   }
 }
 
