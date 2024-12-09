@@ -7,13 +7,18 @@ class Game {
     /**@type {CanvasRenderingContext2D} */
     this.ctx = this.canvas.getContext("2d");
     this.canvasRect = this.canvas.getBoundingClientRect();
-    this.coordinate = new Coordinates(0, 0);
-    this.controllerStats = new ControllerStats();
-    this.sizeX = 8;
-    this.sizeY = 8;
+    this.sizeX = 16;
+    this.sizeY = 16;
     this.hexagonSize = 50; // Hexagon radius
+    /**@type {Coordinates} */
+    this.coordinate = new Coordinates(0, 0);
+    /**@type {ControllerStats} */
+    this.controllerStats = new ControllerStats(0, 0);  
+    // Skal brugs for tilrette af størrelsen for canvas 
+    this.devicePixelRatio = window.devicePixelRatio*0.9;
   }
 
+  /**@param {Hexagon} hexagon  */
   draw(hexagon) {
     const x = hexagon.coordinate.left * this.controllerStats.zoomLevel;
     const y = hexagon.coordinate.top * this.controllerStats.zoomLevel;
@@ -54,9 +59,8 @@ class Game {
         }
       }
     }  
-    var dpr = window.devicePixelRatio;
-    this.canvas.width = window.innerWidth * dpr;
-    this.canvas.height = window.innerHeight * dpr;
+    this.canvas.width = window.innerWidth * this.devicePixelRatio;
+    this.canvas.height = window.innerHeight * this.devicePixelRatio;
   }
 
   gameBoardPanningControlles() {
@@ -116,12 +120,12 @@ class Game {
 class ControllerStats {
   constructor() {
     this.mouseHolding = false;
-    this.mousePos = new Coordinates(0,0);
+    this.mousePos = new Coordinates(0, 0);
     this.scrollSpeed = -0.001;
     this.zoomLevel = 1;
     this.minZoom = 0.25;
     this.maxZoom = 4;
-    this.offset = new Coordinates(0,0);
+    this.offset = new Coordinates(0, 0);
   }
 }
 
