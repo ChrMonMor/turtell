@@ -7,15 +7,15 @@ class Game {
     /**@type {CanvasRenderingContext2D} */
     this.ctx = this.canvas.getContext("2d");
     this.canvasRect = this.canvas.getBoundingClientRect();
+    // Skal brugs for tilrette af størrelsen for canvas 
+    this.devicePixelRatio = window.devicePixelRatio*0.9;
     this.sizeX = 16;
     this.sizeY = 16;
-    this.hexagonSize = 50; // Hexagon radius
+    this.hexagonSize = 50 * this.devicePixelRatio; // Hexagon radius
     /**@type {Coordinates} */
     this.coordinate = new Coordinates(0, 0);
     /**@type {ControllerStats} */
     this.controllerStats = new ControllerStats(0, 0);  
-    // Skal brugs for tilrette af størrelsen for canvas 
-    this.devicePixelRatio = window.devicePixelRatio*0.9;
   }
 
   /**@param {Hexagon} hexagon  */
@@ -59,6 +59,7 @@ class Game {
         }
       }
     }  
+    // aligning the Canvas css with the code
     this.canvas.width = window.innerWidth * this.devicePixelRatio;
     this.canvas.height = window.innerHeight * this.devicePixelRatio;
   }
@@ -68,8 +69,8 @@ class Game {
       if (this.controllerStats.mouseHolding) {
         const deltaX = e.clientX - this.controllerStats.mousePos.left;
         const deltaY = e.clientY - this.controllerStats.mousePos.top;
-        this.coordinate.left += deltaX / this.controllerStats.zoomLevel;
-        this.coordinate.top += deltaY / this.controllerStats.zoomLevel;
+        this.coordinate.left += deltaX / this.controllerStats.zoomLevel * window.devicePixelRatio;
+        this.coordinate.top += deltaY / this.controllerStats.zoomLevel * window.devicePixelRatio;
         this.controllerStats.mousePos.left = e.clientX;
         this.controllerStats.mousePos.top = e.clientY;
       }
@@ -111,8 +112,13 @@ class Game {
   addEvents(){
     addEventListener("resize", () => {
       var dpr = window.devicePixelRatio;
-      this.canvas.width = window.innerWidth * dpr;
-      this.canvas.height = window.innerHeight * dpr;
+      this.canvas.width = window.innerWidth * dpr * this.devicePixelRatio;
+      this.canvas.height = window.innerHeight * dpr * this.devicePixelRatio;
+    });
+    screen.orientation.addEventListener("change", function(e) {
+      var dpr = window.devicePixelRatio;
+      this.canvas.width = window.innerWidth * dpr * this.devicePixelRatio;
+      this.canvas.height = window.innerHeight * dpr * this.devicePixelRatio;
     });
   }
 }
