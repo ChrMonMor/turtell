@@ -15,23 +15,24 @@ class Game {
     /**@type {Coordinates} */
     this.coordinate = new Coordinates(0, 0);
     /**@type {ControllerStats} */
-    this.controllerStats = new ControllerStats(0, 0);  
+    this.controllerStats = new ControllerStats(0, 0); 
   }
 
   /**@param {Hexagon} hexagon  */
   draw(hexagon) {
-    const x = hexagon.coordinate.left * this.controllerStats.zoomLevel;
-    const y = hexagon.coordinate.top * this.controllerStats.zoomLevel;
+    const x = hexagon.coordinate.left * this.controllerStats.zoomLevel + this.controllerStats.offset.left;
+    const y = hexagon.coordinate.top * this.controllerStats.zoomLevel + this.controllerStats.offset.top;
     this.ctx.beginPath();
     for (let i = 0; i < 6; i++) {
       const angle = (i * Math.PI) / 3; // 60-degree increments
       this.ctx.lineTo(
-        x + this.controllerStats.offset.left + this.hexagonSize * this.controllerStats.zoomLevel * Math.cos(angle) + this.coordinate.left * this.controllerStats.zoomLevel,
-        y + this.controllerStats.offset.top + this.hexagonSize * this.controllerStats.zoomLevel * Math.sin(angle) + this.coordinate.top * this.controllerStats.zoomLevel
+        x + this.hexagonSize * this.controllerStats.zoomLevel * Math.cos(angle) + this.coordinate.left * this.controllerStats.zoomLevel,
+        y + this.hexagonSize * this.controllerStats.zoomLevel * Math.sin(angle) + this.coordinate.top * this.controllerStats.zoomLevel
       );
     }
     this.ctx.closePath();
     this.ctx.stroke();
+    this.ctx.drawImage(hexagon.sprite.spritemap, hexagon.sprite.spritemapCoordinates.left, hexagon.sprite.spritemapCoordinates.top, hexagon.sprite.size, hexagon.sprite.size, x + this.coordinate.left-hexagon.sprite.size/2, y + this.coordinate.top-hexagon.sprite.size/2, hexagon.sprite.size, hexagon.sprite.size);
   }
 
   clear() {
@@ -127,7 +128,7 @@ class ControllerStats {
   constructor() {
     this.mouseHolding = false;
     this.mousePos = new Coordinates(0, 0);
-    this.scrollSpeed = -0.001;
+    this.scrollSpeed = -0.002;
     this.zoomLevel = 1;
     this.minZoom = 0.25;
     this.maxZoom = 4;
@@ -145,6 +146,34 @@ class Coordinates {
 class Hexagon {
   constructor(x, y) {
     this.coordinate = new Coordinates(x, y);
+    this.sprite = new Sprite()
+  }
+}
+
+class Sprite {
+  /**@param {string} spritemapURL  */
+  constructor(spritemapURL){
+    /**@type {HTMLImageElement} */
+    this.spritemap = new Image();
+    this.spritemap.src = "assets/sprites/testMap.png";
+    /**@type {Coordinates} */
+    this.spritemapCoordinates = new Coordinates(0,0);
+    /**@type {number} */
+    this.size = 64;
+  }
+  /**
+   * changes the size of the sprite, by changing the spritesheet to a more appropriate 
+   * @param {number} params 
+   */
+  changeSize(params) {
+    this.size = params;
+  }
+  /**
+   * sets the coordinates of the spritemaps left and top start
+   * @param {Coordinates} newCoor 
+   */
+  changeCoordinates(newCoor){
+    this.spritemapCoordinates = newCoor;
   }
 }
 
