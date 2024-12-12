@@ -11,7 +11,7 @@ class Game {
     this.devicePixelRatio = window.devicePixelRatio*0.9;
     this.sizeX = 16;
     this.sizeY = 16;
-    this.hexagonSize = 50 * this.devicePixelRatio; // Hexagon radius
+    this.hexagonSize = 64 * this.devicePixelRatio; // Hexagon radius
     /**@type {Coordinates} */
     this.coordinate = new Coordinates(0, 0);
     /**@type {ControllerStats} */
@@ -32,7 +32,12 @@ class Game {
     }
     this.ctx.closePath();
     this.ctx.stroke();
-    this.ctx.drawImage(hexagon.sprite.spritemap, hexagon.sprite.spritemapCoordinates.left, hexagon.sprite.spritemapCoordinates.top, hexagon.sprite.size, hexagon.sprite.size, x + this.coordinate.left-hexagon.sprite.size/2, y + this.coordinate.top-hexagon.sprite.size/2, hexagon.sprite.size, hexagon.sprite.size);
+    this.ctx.drawImage(hexagon.sprite.spritemap, // image source
+      hexagon.sprite.spritemapCoordinates.left, hexagon.sprite.spritemapCoordinates.top, // sprite 
+      hexagon.sprite.size, hexagon.sprite.size, 
+      x - hexagon.sprite.size/2 + this.coordinate.left * this.controllerStats.zoomLevel,
+      y - hexagon.sprite.size/2 + this.coordinate.top * this.controllerStats.zoomLevel, 
+      hexagon.sprite.size, hexagon.sprite.size);
   }
 
   clear() {
@@ -56,7 +61,7 @@ class Game {
         if (i % 2 === j % 2) {
           const x = i * 1.5 * this.controllerStats.zoomLevel * this.hexagonSize;
           const y = j * Math.sqrt(3) * this.hexagonSize * 0.5 * this.controllerStats.zoomLevel;
-          this.hexGrid.push(new Hexagon(x, y));
+          this.hexGrid.push(new Hexagon(x, y, i, j));
         }
       }
     }  
@@ -144,36 +149,58 @@ class Coordinates {
 }
 
 class Hexagon {
-  constructor(x, y) {
+  constructor(x, y, i, j) {
     this.coordinate = new Coordinates(x, y);
-    this.sprite = new Sprite()
+    this.arrCoor = new Coordinates(i, j);
+    this.sprite = new Sprite();
   }
 }
 
 class Sprite {
   /**@param {string} spritemapURL  */
   constructor(spritemapURL){
+    this.assetsDir = "assets/sprites/";
+    this.sizeName = "64";
     /**@type {HTMLImageElement} */
     this.spritemap = new Image();
-    this.spritemap.src = "assets/sprites/testMap.png";
+    this.spritemap.src = this.assetsDir+this.sizeName+"Map.png";
     /**@type {Coordinates} */
     this.spritemapCoordinates = new Coordinates(0,0);
     /**@type {number} */
     this.size = 64;
   }
+
+}
+class Direction {
+  static Up = new Direction('Up',0);
+  static Down = new Direction('Down',1);
+  static LeftUp = new Direction('LeftUp',2);
+  static RightUp = new Direction('RightUp',3);
+  static LeftDown = new Direction('LeftDown',4);
+  static RightDown = new Direction('RightDown',5);
+  /**@type {Direction} */
+  static enum = [this.Up, this.Down, this.LeftUp, this.RightUp, this.LeftDown, this.RightDown];
   /**
-   * changes the size of the sprite, by changing the spritesheet to a more appropriate 
-   * @param {number} params 
+   * 
+   * @param {string} name 
+   * @param {number} index 0-indexed 
    */
-  changeSize(params) {
-    this.size = params;
+  constructor(name, index) {
+    this.name = name;
+    this.index = index
   }
-  /**
-   * sets the coordinates of the spritemaps left and top start
-   * @param {Coordinates} newCoor 
-   */
-  changeCoordinates(newCoor){
-    this.spritemapCoordinates = newCoor;
+  toString() {
+    return `${this.name}`;
+  }
+  getIndex() {
+    return this.index;
+  }
+  findIndex(target){
+    this.enum.forEach(element => {
+      if (element.toString() === target) {
+        return element;
+      }
+    });
   }
 }
 
