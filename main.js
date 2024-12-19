@@ -127,6 +127,8 @@ class Game {
       this.canvas.height = window.innerHeight * dpr * this.devicePixelRatio;
     });
   }
+
+
 }
 
 class ControllerStats {
@@ -152,7 +154,7 @@ class Hexagon {
   constructor(x, y, i, j) {
     this.coordinate = new Coordinates(x, y);
     this.arrCoor = new Coordinates(i, j);
-    this.sprite = new Sprite();
+    this.sprite = new Sprite("Arrow");
   }
 }
 
@@ -163,7 +165,7 @@ class Sprite {
     this.sizeName = "64";
     /**@type {HTMLImageElement} */
     this.spritemap = new Image();
-    this.spritemap.src = this.assetsDir+this.sizeName+"Map.png";
+    this.spritemap.src = this.assetsDir+this.sizeName+spritemapURL+"Map.png";
     /**@type {Coordinates} */
     this.spritemapCoordinates = new Coordinates(0,0);
     /**@type {number} */
@@ -178,7 +180,7 @@ class Direction {
   static RightUp = new Direction('RightUp',3);
   static LeftDown = new Direction('LeftDown',4);
   static RightDown = new Direction('RightDown',5);
-  /**@type {Direction} */
+  /**@type {Direction[]} */
   static enum = [this.Up, this.Down, this.LeftUp, this.RightUp, this.LeftDown, this.RightDown];
   /**
    * 
@@ -202,6 +204,21 @@ class Direction {
       }
     });
   }
+}
+
+class GamePiece {
+  /**
+   * 
+   * @param {String} sprite 
+   * @param {Number} x 
+   * @param {Number} y 
+   */
+  constructor(sprite, x, y){  
+    this.sprite = new Sprite(sprite);
+    this.coordinate = new Coordinates(x,y)
+
+  }
+
 }
 
 // the object start
